@@ -7,15 +7,14 @@
 
 ## Youtube Videos
 
-I'll be posting a series of weekly videos for this challenge hopefully we will see. 
-- **Episode 1 (Coming Soon)**
+I'll be posting a series of weekly videos for this challenge, and here's what you can look forward to:
+
+- **[Episode 1 (coming soon) - March 8](#)**
+- **[Episode 2 (coming soon) - March 15](#)**
+- **[Episode 3 (coming soon) - March 22](#)**
+- **[Episode 4 (coming soon) - March 29](#)**
 
 
-
-
-<p align="center">
-  <a href=""><strong>Episode 1 (coming soon)</strong></a>
-</p>
 
 
 
