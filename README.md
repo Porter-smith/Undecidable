@@ -7,7 +7,6 @@ This is the respository for the web app for the startup I am making in 30 days c
 <p align="center">
   <a href="https://astro-firebase-svelte-starter.vercel.app/"><strong>Try me!</strong></a>
 </p>
-<h1 align="center">Startup In 30 Days - Undecidable</h1>
 
 ## Getting Started
 
