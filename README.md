@@ -2,10 +2,10 @@
 <h1 align="center">Startup In 30 Days - Undecidable</h1>
 
 <p align="center">
-This is the respository for the web app for the startup I am making in 30 days called Undecidable. I will be uploading videos on it so you can check out my ![youtube channel](https://www.youtube.com/channel/UCnCkvoaFWzZ8ASmdGlkZ33w)!
+This is the respository for the web app for the startup I am making in 30 days called Undecidable. I will be uploading videos on it so you can check out my youtube channel here!
 </p>
 <p align="center">
-  <a href="https://astro-firebase-svelte-starter.vercel.app/"><strong>Go to website!</strong></a>
+  <a href=""><strong>Week 1 (coming soon)</strong></a>
 </p>
 
 ## Getting Started
