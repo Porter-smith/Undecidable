@@ -20,7 +20,7 @@ I'll be posting a series of weekly videos for this challenge, and here's what yo
 
 ## Getting Started
 
-To use this starter pack, follow these steps:
+To run this, follow these steps:
 
 1. **Clone the repository:**
 
@@ -46,6 +46,10 @@ To use this starter pack, follow these steps:
    pnpm run dev
    ```
 
+
+# A thing to note for now
+
+I won't be open sourcing the web scraping api, for getting movie providers as it's kind of gray area (also my code will get roasted as I am new to python xD . This will be for only the website for Undecidable.
 
 ## License Summary
 
