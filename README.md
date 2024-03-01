@@ -5,7 +5,13 @@
   This is the repository for the startup I am making in 30 days called Undecidable. I will be uploading videos on it so you can check out my <a href="https://www.youtube.com/channel/UCnCkvoaFWzZ8ASmdGlkZ33w">youtube channel here!</a>
 </p>
 
-## Youtube Episodes (I'll post update every week for 30 days):
+## Youtube Videos
+
+I'll be posting a series of weekly videos for this challenge hopefully we will see. 
+- **Episode 1 (Coming Soon)**
+
+
+
 
 <p align="center">
   <a href=""><strong>Episode 1 (coming soon)</strong></a>
