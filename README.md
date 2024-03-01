@@ -39,7 +39,7 @@ To use this starter pack, follow these steps:
 
 ## License Summary
 
-This software, "Startup In 30 Days - Undecidable," is shared under specific terms to foster innovation and learning while protecting its original identity and purpose. Here's a brief overview of what you can and cannot do with this project:
+This software, "Undecidable" is shared under specific terms to foster innovation and learning while protecting its original identity and purpose. Here's a brief overview of what you can and cannot do with this project:
 
 ### What You Can Do:
 
