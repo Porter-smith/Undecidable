@@ -16,6 +16,10 @@ I'll be posting a series of weekly videos for this challenge, and here's what yo
 
 
 
+## Figma Designs
+These are the mock ups I made for designing the website!
+https://www.figma.com/file/Jcv3HvpTXvpCng9Xxyg8aW/Undecidable---Project?type=design&node-id=0%3A1&mode=design&t=WnDt944sQfFJq0Zh-1
+
 
 
 ## Getting Started
