@@ -7,6 +7,32 @@ This is the respository for the web app for the startup I am making in 30 days c
 <p align="center">
   <a href="https://astro-firebase-svelte-starter.vercel.app/"><strong>Try me!</strong></a>
 </p>
-# Initally was started from this project: 
-https://vercel.com/templates/svelte/watch-this
+<h1 align="center">Startup In 30 Days - Undecidable</h1>
 
+## Getting Started
+
+To use this starter pack, follow these steps:
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/Porter-smith/startup-in-30-days-undecidable.git
+   ```
+
+2. **Navigate to the project directory:**
+
+   ```bash
+   cd startup-in-30-days-undecidable
+   ```
+
+3. **Install the dependencies:**
+
+   ```bash
+   pnpm install
+   ```
+
+4. **Start the development server:**
+
+   ```bash
+   pnpm run dev
+   ```
