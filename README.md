@@ -49,7 +49,7 @@ To run this, follow these steps:
 
 ## Important Note
 
-Just a heads-up for everyone following the "Undecidable" project: the web scraping API I made won't be in this repository since it's kind of the ace up my sleeve! I deeply appreciate your understanding and ongoing support! If you have questions about it just hit me up! 
+Just a heads-up for everyone following the "Undecidable" project: the web scraping API I made won't be in this repository since it's kind of the ace up my sleeve! I deeply appreciate your understanding and ongoing support! If you have questions about it though just hit me up! 
 
 ## License Summary
 
