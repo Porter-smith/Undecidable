@@ -35,3 +35,19 @@ To use this starter pack, follow these steps:
    ```bash
    pnpm run dev
    ```
+
+
+## License Summary
+
+This software, "Startup In 30 Days - Undecidable," is shared under specific terms to foster innovation and learning while protecting its original identity and purpose. Here's a brief overview of what you can and cannot do with this project:
+
+### What You Can Do:
+
+- **Educational and Open Source Use**: You are encouraged to use, modify, and distribute the software for any non-commercial, educational, or open-source project.
+- **Commercial Use of Snippets**: Feel free to incorporate individual code snippets or smaller sections from this software into your commercial projects, provided they do not constitute the bulk of your project.
+
+### What You Cannot Do:
+
+- **No Full-Scale Commercial Use**: You are not permitted to use the entire project or substantial portions of it as part of any commercial product or service.
+- **Name Restriction**: The name "Undecidable" is integral to this project's identity and cannot be used in any derivative works or modifications without explicit permission from me. This ensures the project's originality and recognition are preserved across various platforms and uses.
+
