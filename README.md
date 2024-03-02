@@ -18,7 +18,7 @@ I'll be posting a series of weekly videos for this challenge, and here's what yo
 
 ## Figma Designs
 These are the mock ups I made for designing the website!
-https://www.figma.com/file/Jcv3HvpTXvpCng9Xxyg8aW/Undecidable---Project?type=design&node-id=0%3A1&mode=design&t=WnDt944sQfFJq0Zh-1
+[Figma File](https://www.figma.com/file/Jcv3HvpTXvpCng9Xxyg8aW/Undecidable---Project?type=design&node-id=0%3A1&mode=design&t=WnDt944sQfFJq0Zh-1)
 
 
 
@@ -68,4 +68,12 @@ This software, "Undecidable" is shared under specific terms to foster innovation
 
 - **No Full-Scale Commercial Use**: You are not permitted to use the entire project or substantial portions of it as part of any commercial product or service.
 - **Name Restriction**: The name "Undecidable" is integral to this project's identity and cannot be used in any derivative works or modifications without explicit permission from me. This ensures the project's originality and recognition are preserved across various platforms and uses.
+
+
+## Credits (Other Help)
+
+- **[AI Film Recommendation Generator](https://vercel.com/templates/svelte/watch-this)** used as a starting point and helped me alot for learning!
+- ** As for the logo I had it initailly drawn by AI using chatGPT but the text was quite bad so I paid and artist to fix the text for $17.95 I will be using it as a placeholder for now and replace with a redrawn version when the business starts making money ! ( Support your artists!) The person I had to fix the logo is [Abu Hurera](https://www.fiverr.com/superdesigner8?source=gig_page)
+- Website Desings by me
+- Frontend, Backend other services by me
 
