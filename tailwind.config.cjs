@@ -1,12 +1,12 @@
-/** @type {import('tailwindcss').Config}*/
-const config = {
+/** @type {import('tailwindcss').Config} */
+export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-
+	darkMode: ["class"],
 	theme: {
-		extend: {}
+	  extend: {
+		fontFamily: {
+				  inter: ['Inter', 'sans-serif'],
+				  },
+	  }
 	},
-
-	plugins: []
-};
-
-module.exports = config;
+  };
