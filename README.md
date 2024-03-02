@@ -72,7 +72,7 @@ This software, "Undecidable" is shared under specific terms to foster innovation
 
 ## Credits (Other Help)
 
-- **[AI Film Recommendation Generator on Vercel](https://vercel.com/templates/svelte/watch-this)** used as a starting point and helped me alot for learning and inspired the idea more!
+- **[AI Film Recommendation Generator on Vercel](https://vercel.com/templates/svelte/watch-this)** used as a starting point and helped me alot for learning and helped inspire the idea for the business
 - Idea - my mom xD
 - ** Logo Designs drawn by AI using chatGPT, + also an artist to fix the text. I will be using it as a placeholder for now and replace with a redrawn version by an artist when the business starts making money ! The person I had to fix the text is [Abu Hurera](https://www.fiverr.com/superdesigner8?source=gig_page)
 - Website Desings by me
