@@ -5,5 +5,4 @@ export interface User {
 	emailVerified: boolean;
 	displayName: string | null;
 	photoURL: string | null;
-	isAnonymous: boolean;
 }

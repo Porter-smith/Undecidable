@@ -1,10 +1,7 @@
-import { getAuth } from 'firebase-admin/auth';
 import createUserDocument from '@/lib/server/firebase/users/createUserDocument';
-import { app } from '@/lib/server/firebase/admin';
+import { auth } from '@/lib/server/firebase/admin.js';
 // Create User Document
 export const POST = async ({ request }) => {
-	const auth = getAuth(app);
-
 	const idToken = request.headers.get('Authorization')?.split('Bearer ')[1];
 	if (!idToken) {
 		return new Response(

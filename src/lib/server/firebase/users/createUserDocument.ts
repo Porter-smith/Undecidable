@@ -10,7 +10,6 @@ async function createUserDocument(userId: string): Promise<UserDocument> {
 	if (!doc.exists) {
 		const newUser = {
 			userID: userId,
-			organizations: [],
 			timestamp: FieldValue.serverTimestamp()
 		};
 		await userDocRef.set(newUser);

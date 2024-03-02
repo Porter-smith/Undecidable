@@ -1,0 +1,3 @@
+# Disallow all search engines from accessing the admin area
+User-agent: *
+Disallow: /admin/
