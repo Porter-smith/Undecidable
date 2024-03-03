@@ -3,6 +3,8 @@
 	import fetchGetRecommendation from '@/services/api/fetchGetRecommendation';
 	import * as animateScroll from 'svelte-scrollto';
 	import { Button } from '@/components/base/button';
+	import RecommendationCard from '@/components/RecommendationCard.svelte';
+	import LoadingCard from '@/components/LoadingCard.svelte';
 	let cinemaType = 'movie';
 	let specificDescriptors = '';
 	let loading = false;
@@ -67,25 +69,47 @@
 	async function handleStreamedResponse(stream) {
 		const reader = stream.getReader();
 		const decoder = new TextDecoder('utf-8');
+		let buffer = '';
 
 		try {
 			while (true) {
 				const { value, done } = await reader.read();
 				if (done) break;
 
-				const chunk = decoder.decode(value, { stream: true });
-				if (chunk) {
+				buffer += decoder.decode(value, { stream: true });
+
+				// Attempt to extract and parse JSON objects from the buffer.
+				while (buffer) {
+					let pos = buffer.indexOf('} {');
+					if (pos === -1) break; // No complete object to parse.
+
+					// Add 1 to position to include the closing brace '}'.
+					let jsonStr = buffer.substring(0, pos + 1);
 					try {
-						// Assuming each chunk is a valid JSON string.
-						const data = JSON.parse(chunk);
+						let data = JSON.parse(jsonStr);
 						updateMovieData(data);
 					} catch (err) {
-						console.error('Error parsing JSON:', chunk, err);
+						console.error('Error parsing JSON:', jsonStr, err);
+						// Exit the loop on parsing error to avoid infinite loop.
+						break;
 					}
+
+					// Remove the processed object from the buffer.
+					buffer = buffer.slice(pos + 2);
 				}
 			}
 		} catch (err) {
 			console.error('An error occurred while streaming the response: ', err);
+		}
+
+		// After the loop, try to parse any remaining JSON in the buffer.
+		if (buffer) {
+			try {
+				let data = JSON.parse(buffer);
+				updateMovieData(data);
+			} catch (err) {
+				console.error('Error parsing JSON at the end of the stream:', buffer, err);
+			}
 		}
 	}
 
@@ -145,15 +169,11 @@
 			{#if recommendation !== ''}
 				<div class="mb-8">
 					{#if typeof recommendation !== 'string' && recommendation.title}
-						<div>
-							{recommendation.title}
-						</div>
-						<!-- <RecommendationCard {recommendation} /> -->
+						<RecommendationCard {recommendation} />
 					{:else}
-						Loading...
-						<!-- <div in:fade> -->
-						<!-- <LoadingCard incomingStream={recommendation} /> -->
-						<!-- </div> -->
+						<div in:fade>
+							<LoadingCard incomingStream={recommendation} />
+						</div>
 					{/if}
 				</div>
 			{/if}
