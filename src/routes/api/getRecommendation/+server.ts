@@ -47,7 +47,9 @@ export async function POST({ request }: { request: any }) {
 		specificDescriptors
 	});
 	const callbacks: OpenAIStreamCallbacks = {
-		onFinal: () => {}
+		onFinal: (accumulatedContent, recommendations) => {
+			console.log(recommendations);
+		}
 	};
 	// Initiating the stream handling
 	const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });
