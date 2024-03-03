@@ -7,6 +7,7 @@
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import type { ToolCall } from '@/types/message';
+import { redis } from '../redis';
 // Define types for the callbacks to handle function and tool calls.
 interface MovieRecommendation {
 	title: string;
@@ -21,18 +22,33 @@ export interface OpenAIStreamCallbacks {
 	onToolCall?: (toolCall: ToolCall) => Promise<any>;
 	onFinal?: (accumulatedContent: string, recommendations: MovieRecommendation[]) => void;
 }
-
+async function delay(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+async function generateApiKey() {
+	// This should generate a unique and secure API key
+	return 'unique_api_key_' + Date.now(); // Simplified example, consider a more robust key generation
+}
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
 export async function* handleOpenAIStream(
 	stream: Stream<ChatCompletionChunk>,
 	callbacks: OpenAIStreamCallbacks
 ): AsyncGenerator<string, void, unknown> {
+	// Generate and store an API key in Redis
+	const apiKey = await generateApiKey();
+	await redis.set(apiKey, '5'); // Initialize the usage counter to 5.
+	// Calculate the expiration timestamp (current time + 60 seconds).
+	const expiryTimestamp = Math.floor(Date.now() / 1000) + 60; // Get the current Unix time in seconds and add 60 seconds.
+
+	// Set the expiration time for the API key using EXPIREAT.
+	await redis.expireat(apiKey, expiryTimestamp);
+	// Yield the API key to the client.
+	yield JSON.stringify({ apiKey: apiKey });
+	yield ' ';
 	let accumulatedContent = '';
 	let processableContent = '';
 	let recommendations = [];
-	let fetchPromises = [];
-	let availableResults = [];
 
 	for await (const chunk of stream) {
 		const delta = chunk.choices[0].delta;
@@ -51,6 +67,7 @@ export async function* handleOpenAIStream(
 					year: match[3]
 				};
 				recommendations.push(movieJson);
+				await delay(100); // Timing issue
 				yield JSON.stringify(movieJson);
 				yield ' ';
 				// Remove the processed match from processableContent.
