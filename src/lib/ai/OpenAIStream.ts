@@ -21,21 +21,13 @@ export interface OpenAIStreamCallbacks {
 	onToolCall?: (toolCall: ToolCall) => Promise<any>;
 	onFinal?: (accumulatedContent: string, recommendations: MovieRecommendation[]) => void;
 }
-function processMovieLine(line): MovieRecommendation | null {
-	const match = line.match(/^(?:\d+\.\s\*\*|\s+)?(.*?)\s*\((\d{4})\):/);
-	if (match) {
-		let title = match[1].replace(/\*\*$/, '').trim();
-		let year = match[2];
 
-		// Return the object directly.
-		return { title, year };
-	}
-	return null;
-}
 async function getMovieData({ title, year }: MovieRecommendation): Promise<Movie> {
 	return { title, year, description: 'test' };
 }
-
+async function delay(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
 export async function* handleOpenAIStream(
@@ -121,20 +113,13 @@ export async function* handleOpenAIStream(
 	while (fetchPromises.length > 0) {
 		while (availableResults.length > 0) {
 			let result = availableResults.shift(); // Remove the result from the array.
+			console.log(result);
 			yield result; // Yield the available result.
-			yield ' ';
+			await delay(100); // Wait for a second after yielding each result.
 		}
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for a second before checking again.
+		await delay(100); // Wait for a second before checking again if there are no immediate results.
 	}
-	// Wait for all fetch operations to complete before processing the final content.
-	// await Promise.all(fetchPromises);
-	// // Now, process all available results.
-	// for (let result of availableResults) {
-	// 	console.log(result);
-	// 	yield result;
-	// 	yield ' ';
-	// }
-	// After all promises have resolved, check one last time for any remaining results.
+
 	while (availableResults.length > 0) {
 		let result = availableResults.shift(); // Remove the result from the array.
 		console.log(result);
