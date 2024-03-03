@@ -89,6 +89,12 @@ export async function* handleOpenAIStream(
 					.then((result) => {
 						// Instead of yielding here, store the result for later.
 						availableResults.push(result);
+						// Find the index of this promise in the fetchPromises array.
+						let index = fetchPromises.indexOf(fetchPromise);
+						if (index > -1) {
+							// Remove the promise from the array.
+							fetchPromises.splice(index, 1);
+						}
 					})
 					.catch((error) => {
 						// Handle or log error
@@ -111,13 +117,28 @@ export async function* handleOpenAIStream(
 			}
 		}
 	}
-
+	// TODO: Add a thing where after lets say if a promise takes like 10s we can just say it failed
+	while (fetchPromises.length > 0) {
+		while (availableResults.length > 0) {
+			let result = availableResults.shift(); // Remove the result from the array.
+			yield result; // Yield the available result.
+			yield ' ';
+		}
+		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for a second before checking again.
+	}
 	// Wait for all fetch operations to complete before processing the final content.
-	await Promise.all(fetchPromises);
-	// Now, process all available results.
-	for (let result of availableResults) {
+	// await Promise.all(fetchPromises);
+	// // Now, process all available results.
+	// for (let result of availableResults) {
+	// 	console.log(result);
+	// 	yield result;
+	// 	yield ' ';
+	// }
+	// After all promises have resolved, check one last time for any remaining results.
+	while (availableResults.length > 0) {
+		let result = availableResults.shift(); // Remove the result from the array.
 		console.log(result);
-		yield result;
+		yield result; // Yield the available result.
 		yield ' ';
 	}
 
