@@ -2,6 +2,7 @@
 	import type { CinemaSearchCriteria } from '@/types/recommendation';
 	import fetchGetRecommendation from '@/services/api/fetchGetRecommendation';
 	import * as animateScroll from 'svelte-scrollto';
+	import { Button } from '@/components/base/button';
 	let cinemaType = 'movie';
 	let specificDescriptors = '';
 	let loading = false;
@@ -53,12 +54,16 @@
 		);
 
 		if (index >= 0) {
-			recommendations[index] = { ...recommendations[index], ...data };
+			recommendations = [
+				...recommendations.slice(0, index),
+				{ ...recommendations[index], ...data },
+				...recommendations.slice(index + 1)
+			];
 		} else {
-			recommendations.push(data);
+			recommendations = [...recommendations, data];
 		}
-		console.log(recommendations);
 	}
+
 	async function handleStreamedResponse(stream) {
 		const reader = stream.getReader();
 		const decoder = new TextDecoder('utf-8');
@@ -126,17 +131,13 @@
 	placeholder="Enter any specific descriptors here..."
 ></textarea>
 
-<button
-	on:click={getRecommendations}
-	disabled={loading}
-	class="mt-4 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:opacity-50"
->
+<Button on:click={getRecommendations} disabled={loading}>
 	{#if loading}
 		<span>Loading...</span>
 	{:else}
 		<span>Get Recommendations</span>
 	{/if}
-</button>
+</Button>
 
 {#if recommendations}
 	{#each recommendations as recommendation, i (i)}
