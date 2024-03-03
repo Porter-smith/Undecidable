@@ -42,7 +42,7 @@
 				specificDescriptors
 			};
 			const stream = await fetchGetRecommendation(criteria);
-			await handleStreamedResponse(stream);
+			await handleStreamedResponse({ stream });
 		} catch (err) {
 			error = 'An error occurred while fetching recommendations.';
 		}
@@ -65,51 +65,24 @@
 			recommendations = [...recommendations, data];
 		}
 	}
-
-	async function handleStreamedResponse(stream) {
+	async function handleStreamedResponse({ stream }: { stream: ReadableStream<Uint8Array> }) {
 		const reader = stream.getReader();
 		const decoder = new TextDecoder('utf-8');
-		let buffer = '';
 
-		try {
-			while (true) {
-				const { value, done } = await reader.read();
-				if (done) break;
-
-				buffer += decoder.decode(value, { stream: true });
-
-				// Attempt to extract and parse JSON objects from the buffer.
-				while (buffer) {
-					let pos = buffer.indexOf('} {');
-					if (pos === -1) break; // No complete object to parse.
-
-					// Add 1 to position to include the closing brace '}'.
-					let jsonStr = buffer.substring(0, pos + 1);
-					try {
-						let data = JSON.parse(jsonStr);
-						updateMovieData(data);
-					} catch (err) {
-						console.error('Error parsing JSON:', jsonStr, err);
-						// Exit the loop on parsing error to avoid infinite loop.
-						break;
-					}
-
-					// Remove the processed object from the buffer.
-					buffer = buffer.slice(pos + 2);
-				}
-			}
-		} catch (err) {
-			console.error('An error occurred while streaming the response: ', err);
+		let readResult;
+		while (!(readResult = await reader.read()).done) {
+			const chunk = decoder.decode(readResult.value);
+			await processChunk(chunk);
 		}
+	}
 
-		// After the loop, try to parse any remaining JSON in the buffer.
-		if (buffer) {
-			try {
-				let data = JSON.parse(buffer);
-				updateMovieData(data);
-			} catch (err) {
-				console.error('Error parsing JSON at the end of the stream:', buffer, err);
-			}
+	async function processChunk(chunk: string) {
+		console.log('chunk', chunk);
+		try {
+			const data = JSON.parse(chunk);
+			updateMovieData(data);
+		} catch (error) {
+			console.log('not a json', chunk);
 		}
 	}
 
