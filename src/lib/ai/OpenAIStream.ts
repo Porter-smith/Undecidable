@@ -68,6 +68,9 @@ export async function* handleOpenAIStream(
 				if (movieJson) {
 					recommendations.push(movieJson);
 					yield JSON.stringify(movieJson);
+					// TODO : Werid vercel bug I found where yielding json objects need to yield an empty string after it to fix it ???? I don't why lol
+
+					yield ' ';
 				}
 			}
 		}
@@ -75,7 +78,6 @@ export async function* handleOpenAIStream(
 	if (callbacks.onToolCall && toolCalls && Object.keys(toolCalls).length > 0) {
 		const toolCallsArray = Object.values(toolCalls); // This creates an actual array from your object
 		const jsonArrayString = JSON.stringify(toolCallsArray); // Converts the array into a JSON string
-		// TODO : Werid vercel bug I found where yield stringified arrays need to yield an empty string to fix it ???? I don't why lol
 		yield jsonArrayString;
 		yield ' ';
 		for (const index in toolCalls) {
