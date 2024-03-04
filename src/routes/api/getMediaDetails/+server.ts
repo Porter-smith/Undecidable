@@ -10,7 +10,6 @@ async function RedisApiCheck(apiKey) {
 		if (keyCount && keyCount > 0) {
 			// Decrement the API key usage counter
 			await redis.decr(apiKey);
-			console.log('Checked');
 			return true;
 		} else {
 			return false;
