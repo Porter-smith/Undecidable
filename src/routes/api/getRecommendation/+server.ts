@@ -7,9 +7,25 @@ import type { CinemaSearchCriteria } from '@/types/recommendation';
 import type { RequestHandler } from './$types';
 import getUserData from '@/lib/server/firebase/users/getUserData';
 import { FREE_REQUEST_COUNT, USER_REQUEST_COUNT } from '@/constants';
-import redis from '@/lib/redis';
-import createRecommendation from '@/lib/server/firebase/movies/createRecommendation.js';
-import crypto from 'crypto';
+import { createMediaAccessLimiterCookie, updateRequestCountRedis } from '@/lib/redisUtils';
+import { updateRequestCountCookie } from '@/lib/cookieUtils';
+import type { User } from '@/types/user';
+import type { Cookies } from '@sveltejs/kit';
+async function rateLimiter({ user, cookies }: { user: User | null; cookies: Cookies }) {
+	if (user) {
+		// For authenticated users, manage request counts using Redis
+		const hasRemainingRequests = await updateRequestCountRedis(user.uid);
+		if (!hasRemainingRequests) {
+			throw new Error(`You have reached your ${USER_REQUEST_COUNT} daily search limit!`);
+		}
+	} else {
+		// For non-authenticated users, use cookie-based tracking
+		const hasRemainingFreeRequests = updateRequestCountCookie(cookies);
+		if (!hasRemainingFreeRequests) {
+			throw new Error(`You have reached your ${FREE_REQUEST_COUNT} daily searches!`);
+		}
+	}
+}
 function buildSearchCriteriaPrompt({
 	cinemaType,
 	selectedCategories,
@@ -44,150 +60,38 @@ async function OpenAIAPI({ systemPrompt }: { systemPrompt: string }) {
 
 	return response;
 }
-// Generate a secure API key
-function generateApiKey() {
-	// Generate a random 32-byte buffer
-	const randomBytes = crypto.randomBytes(32);
-	// Convert the buffer to a hexadecimal string
-	const apiKey = randomBytes.toString('hex');
-	return `${apiKey}`;
-}
-async function createMediaAccessLimiterCookie(cookies) {
-	// Always generate a new API key
-	const apiKey = generateApiKey(); // Your function to generate an API key
-	try {
-		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
-	} catch (e) {
-		console.log(e);
-	}
 
-	// Define cookie options with a 60 seconds expiration
-	const options = {
-		maxAge: 60, // Expires in 60 seconds
-		secure: process.env.NODE_ENV === 'production', // Secure flag for HTTPS
-		httpOnly: true, // HttpOnly to prevent access from client-side scripts
-		sameSite: 'strict', // SameSite for CSRF protection
-		path: '/' // Accessible across the entire site
-	};
-
-	// Set the 'media_api_key' cookie with the new API key and options
-	cookies.set('media_api_key', apiKey, options);
-
-	// Return the new API key for potential immediate use
-	return apiKey;
-}
-
-function updateRequestCountCookie(cookies) {
-	// Retrieve the current request count or initialize it to 3 if not present
-	let requestCount = cookies.get('request_count');
-	console.log(requestCount);
-	requestCount = requestCount ? parseInt(requestCount) : FREE_REQUEST_COUNT; // Start with 3 requests for new users
-
-	// Check if the user has already utilized their requests
-	if (requestCount <= 0) {
-		// No more requests allowed; prompt the user to create an account
-		return false;
-	}
-
-	// Decrement the request count for each request
-	requestCount--;
-
-	// Define cookie options
-	const options = {
-		// Set the cookie to expire in 24 hours
-		maxAge: 60 * 60 * 24,
-		// Secure flag should be true in production for HTTPS
-		secure: process.env.NODE_ENV === 'production',
-		// HttpOnly flag to prevent access from client-side scripts
-		httpOnly: true,
-		// SameSite policy for CSRF protection
-		sameSite: 'strict',
-		// Cookie accessible across the entire site
-		path: '/'
-	};
-
-	// Update the request count cookie
-	cookies.set('request_count', requestCount.toString(), options);
-
-	// Requests are still available
-	return true;
-}
-async function updateRequestCountRedis(userUid) {
-	// Use the standardized key with a prefix and the user's UID
-	const key = `USER_REQUEST_COUNT:${userUid}`;
-
-	// Retrieve the current request count or initialize it if not present
-	let requestCount = await redis.get(key);
-	requestCount = requestCount ? parseInt(requestCount) : USER_REQUEST_COUNT;
-
-	// Check if there are no remaining requests
-	if (requestCount <= 0) {
-		// No additional requests are allowed
-		return false;
-	}
-
-	// Decrement the request count and update it in Redis
-	requestCount--;
-	await redis.set(key, requestCount, 'EX', 60 * 60 * 24); // Update with a 24-hour expiration
-
-	return true;
-}
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	const sessionCookie = cookies.get('__session') ?? null;
-	// Get user data based on the session cookie.
-
 	const user = await getUserData(sessionCookie);
-	if (user) {
-		// For authenticated users, manage request counts using Redis
-		const hasRemainingRequests = await updateRequestCountRedis(user.uid);
-		if (!hasRemainingRequests) {
-			return new Response(
-				JSON.stringify({
-					error: `You have reached your ${USER_REQUEST_COUNT} daily search limit! Please wait until tomorrow or consider upgrading your account.`
-				}),
-				{
-					status: 429,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			);
-		}
-	} else {
-		// For non-authenticated users, fall back to cookie-based tracking
-		const hasRemainingFreeRequests = updateRequestCountCookie(cookies);
-		if (!hasRemainingFreeRequests) {
-			return new Response(
-				JSON.stringify({
-					error: `You have reached your ${FREE_REQUEST_COUNT} daily searches! To search more, please create a free account.`
-				}),
-				{
-					status: 429,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			);
-		}
+
+	try {
+		// Apply the rate limiter
+		await rateLimiter({ user, cookies });
+
+		// If the rate limiter does not throw an error, proceed with the request handling
+		const { cinemaType, selectedCategories, specificDescriptors } = await request.json();
+		const criteriaPrompt = buildSearchCriteriaPrompt({
+			cinemaType,
+			selectedCategories,
+			specificDescriptors
+		});
+
+		// Create API Key in cookies for getMediaDetails endpoint, manage streaming response, etc.
+		await createMediaAccessLimiterCookie(cookies);
+		const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });
+		const callbacks: OpenAIStreamCallbacks = {
+			/* Your callback implementations */
+		};
+		const stream = handleOpenAIStream(response, callbacks);
+		return new StreamingTextResponse(stream);
+	} catch (error) {
+		// Handle errors if they are thrown
+		return new Response(
+			JSON.stringify({
+				error: error instanceof Error ? error.message : 'An unexpected error occurred'
+			}),
+			{ status: 429, headers: { 'Content-Type': 'application/json' } }
+		);
 	}
-
-	// User is authenticated, proceed with updating user data...
-	// Extract the data you want to update from the request body.
-	const { cinemaType, selectedCategories, specificDescriptors } = await request.json();
-	const criteriaPrompt = buildSearchCriteriaPrompt({
-		cinemaType,
-		selectedCategories,
-		specificDescriptors
-	});
-	const callbacks: OpenAIStreamCallbacks = {
-		onFinal: async (accumulatedContent, recommendations) => {
-			const userUID = user?.uid || 'Anonomous User';
-			await createRecommendation(userUID, recommendations, criteriaPrompt);
-			console.log(recommendations);
-		}
-	};
-
-	// Create an API Key that our getMediaDetails endpoint can use
-	await createMediaAccessLimiterCookie(cookies);
-	// Initiating the stream handling
-	const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });
-
-	const stream = handleOpenAIStream(response, callbacks);
-	return new StreamingTextResponse(stream);
 };

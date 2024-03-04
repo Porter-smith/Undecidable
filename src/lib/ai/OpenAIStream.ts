@@ -29,41 +29,50 @@ async function delay(ms) {
 
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
-export async function* handleOpenAIStream(
+export function handleOpenAIStream(
 	stream: Stream<ChatCompletionChunk>,
 	callbacks: OpenAIStreamCallbacks
-): AsyncGenerator<string, void, unknown> {
-	let accumulatedContent = '';
-	let processableContent = '';
-	let recommendations = [];
+): ReadableStream<string> {
+	return new ReadableStream<string>({
+		async start(controller) {
+			let accumulatedContent = '';
+			let processableContent = '';
+			let recommendations = [];
 
-	for await (const chunk of stream) {
-		const delta = chunk.choices[0].delta;
+			for await (const chunk of stream) {
+				const delta = chunk.choices[0].delta;
 
-		if (delta.content) {
-			processableContent += delta.content;
-			accumulatedContent += delta.content;
+				if (delta.content) {
+					processableContent += delta.content;
+					accumulatedContent += delta.content;
 
-			// Use a global regular expression to find all matches.
-			const regex = /(\d+)\.\s\*\*(.+)\*\*\s\((\d{4})\):/g;
-			let match;
-			while ((match = regex.exec(processableContent)) !== null) {
-				let movieJson = {
-					// rank: match[1],
-					title: match[2],
-					year: match[3]
-				};
-				recommendations.push(movieJson);
-				await delay(10); // Timing issue
-				yield JSON.stringify(movieJson);
-				yield ' ';
-				// Remove the processed match from processableContent.
-				processableContent = processableContent.replace(match[0], '');
+					// Use a global regular expression to find all matches.
+					const regex = /(\d+)\.\s\*\*(.+)\*\*\s\((\d{4})\):/g;
+					let match;
+					while ((match = regex.exec(processableContent)) !== null) {
+						const movieJson = {
+							title: match[2],
+							year: match[3]
+						};
+						recommendations.push(movieJson);
+
+						// Timing to ensure proper async handling, not truly needed unless specific logic requires it.
+						await delay(10);
+
+						controller.enqueue(JSON.stringify(movieJson));
+						// controller.enqueue(' ');
+
+						// Remove the processed match from processableContent.
+						processableContent = processableContent.replace(match[0], '');
+					}
+				}
 			}
-		}
-	}
 
-	if (accumulatedContent && callbacks.onFinal) {
-		callbacks.onFinal(accumulatedContent, recommendations);
-	}
+			if (accumulatedContent && callbacks.onFinal) {
+				callbacks.onFinal(accumulatedContent, recommendations);
+			}
+
+			controller.close();
+		}
+	});
 }
