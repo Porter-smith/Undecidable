@@ -8,10 +8,9 @@ import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import type { ToolCall } from '@/types/message';
 import redis from '../redis';
-import crypto from 'crypto';
 
 // Define types for the callbacks to handle function and tool calls.
-export interface MovieRecommendation {
+export interface ShowRecommendation {
 	title: string;
 	year: string;
 }
@@ -22,36 +21,18 @@ interface Movie {
 }
 export interface OpenAIStreamCallbacks {
 	onToolCall?: (toolCall: ToolCall) => Promise<any>;
-	onFinal?: (accumulatedContent: string, recommendations: MovieRecommendation[]) => void;
+	onFinal?: (accumulatedContent: string, recommendations: ShowRecommendation[]) => void;
 }
 async function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Generate a secure API key
-function generateApiKey() {
-	// Generate a random 32-byte buffer
-	const randomBytes = crypto.randomBytes(32);
-	// Convert the buffer to a hexadecimal string
-	const apiKey = randomBytes.toString('hex');
-	return `${apiKey}`;
-}
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
 export async function* handleOpenAIStream(
 	stream: Stream<ChatCompletionChunk>,
 	callbacks: OpenAIStreamCallbacks
 ): AsyncGenerator<string, void, unknown> {
-	// Generate and store an API key in Redis
-	const apiKey = generateApiKey();
-	try {
-		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
-	} catch (e) {
-		console.log(e);
-	}
-	// Yield the API key to the client.
-	yield JSON.stringify({ apiKey: apiKey });
-	yield ' ';
 	let accumulatedContent = '';
 	let processableContent = '';
 	let recommendations = [];
@@ -73,7 +54,7 @@ export async function* handleOpenAIStream(
 					year: match[3]
 				};
 				recommendations.push(movieJson);
-				await delay(200); // Timing issue
+				await delay(10); // Timing issue
 				yield JSON.stringify(movieJson);
 				yield ' ';
 				// Remove the processed match from processableContent.

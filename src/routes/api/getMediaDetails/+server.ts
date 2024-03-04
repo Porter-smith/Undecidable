@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { OMDB_API_KEY } from '$env/static/private';
 import redis from '@/lib/redis.js';
+import type { RequestHandler } from './$types';
 
 // Function to check if the API key exists and decrement its usage counter
 async function RedisApiCheck(apiKey) {
@@ -21,9 +22,9 @@ async function RedisApiCheck(apiKey) {
 	}
 }
 
-export async function POST({ request }) {
-	// Extract API key from the request, assuming it's provided in a header
-	const apiKey = request.headers.get('x-api-key');
+export const POST: RequestHandler = async ({ request, cookies }) => {
+	// Extract the API key from the cookie
+	const apiKey = cookies.get('media_api_key');
 
 	// Validate the API key
 	if (!(await RedisApiCheck(apiKey))) {
@@ -42,4 +43,4 @@ export async function POST({ request }) {
 
 	// Return the fetched movie details
 	return json(details);
-}
+};

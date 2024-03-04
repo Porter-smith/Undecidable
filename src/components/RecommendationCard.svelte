@@ -3,14 +3,12 @@
 	import LoadingCard from './LoadingCard.svelte';
 
 	export let recommendation;
-	export let searchApiKey: string;
 	async function getRecommendationInfo() {
 		const response = await fetch('/api/getMediaDetails', {
 			method: 'POST',
 			body: JSON.stringify({ title: recommendation.title }),
 			headers: {
-				'Content-Type': 'application/json',
-				'x-api-key': searchApiKey // Pass the API key in the request headers
+				'Content-Type': 'application/json'
 			}
 		});
 		let recommendationDetails = await response.json();

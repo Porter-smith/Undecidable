@@ -1,11 +1,11 @@
 // Assuming this function is part of a server-side Node.js environment
 // since firebase-admin is designed for server-side use.
 import { db } from '@/lib/server/firebase/admin';
-import { type MovieRecommendation } from '@/lib/ai/OpenAIStream';
+import { type ShowRecommendation } from '@/lib/ai/OpenAIStream';
 
 async function createRecommendation(
 	userID: string,
-	movies: MovieRecommendation[],
+	shows: ShowRecommendation[],
 	searchQuery: string
 ) {
 	try {
@@ -13,7 +13,7 @@ async function createRecommendation(
 		await db.collection('recommendations').add({
 			userID: userID, // Storing user ID associated with the recommendation
 			createdAt: new Date(), // Using the current date and time as the timestamp
-			movies: movies, // Storing the array of movie objects
+			shows: shows, // Storing the array of movie objects
 			searchQuery: searchQuery
 			// You can add other relevant fields as necessary
 		});

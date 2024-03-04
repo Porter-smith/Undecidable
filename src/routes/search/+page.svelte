@@ -5,15 +5,14 @@
 	import { Button } from '@/components/base/button';
 	import RecommendationCard from '@/components/RecommendationCard.svelte';
 	import LoadingCard from '@/components/LoadingCard.svelte';
+	import { meta } from '@/lib/metaTags';
+
 	let cinemaType = 'movie';
 	let specificDescriptors = '';
 	let loading = false;
 	let selectedCategories: Array<string> = [];
-	let searchResponse = '';
 	let error = '';
 	let recommendations = [];
-	import { meta } from '@/lib/metaTags';
-	export let data;
 	const title = meta.search.title;
 	const description = meta.search.description;
 
@@ -33,10 +32,8 @@
 		{ value: 'movie', title: 'Movie' },
 		{ value: 'tv show or movie', title: 'No Preference' }
 	];
-	let searchApiKey = '';
 	async function getRecommendations() {
 		loading = true;
-		searchResponse = '';
 		error = '';
 		recommendations = [];
 		try {
@@ -55,26 +52,21 @@
 	}
 
 	function updateMovieData(chunk) {
-		// Check if the chunk is an API key
-		if (chunk.apiKey) {
-			searchApiKey = chunk.apiKey;
-		} else {
-			// Assume the chunk is movie data
-			const index = recommendations.findIndex(
-				(movie) => movie.title === chunk.title && movie.year === chunk.year
-			);
+		// Assume the chunk is movie data
+		const index = recommendations.findIndex(
+			(movie) => movie.title === chunk.title && movie.year === chunk.year
+		);
 
-			if (index >= 0) {
-				// Update existing movie data
-				recommendations = [
-					...recommendations.slice(0, index),
-					{ ...recommendations[index], ...chunk },
-					...recommendations.slice(index + 1)
-				];
-			} else {
-				// Add new movie data
-				recommendations = [...recommendations, chunk];
-			}
+		if (index >= 0) {
+			// Update existing movie data
+			recommendations = [
+				...recommendations.slice(0, index),
+				{ ...recommendations[index], ...chunk },
+				...recommendations.slice(index + 1)
+			];
+		} else {
+			// Add new movie data
+			recommendations = [...recommendations, chunk];
 		}
 	}
 	async function handleStreamedResponse({ stream }: { stream: ReadableStream<Uint8Array> }) {
@@ -158,7 +150,7 @@
 			{#if recommendation !== ''}
 				<div class="mb-8">
 					{#if typeof recommendation !== 'string' && recommendation.title}
-						<RecommendationCard {searchApiKey} {recommendation} />
+						<RecommendationCard {recommendation} />
 					{:else}
 						<div in:fade>
 							<LoadingCard incomingStream={recommendation} />

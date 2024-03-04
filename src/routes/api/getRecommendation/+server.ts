@@ -9,6 +9,7 @@ import getUserData from '@/lib/server/firebase/users/getUserData';
 import { FREE_REQUEST_COUNT, USER_REQUEST_COUNT } from '@/constants';
 import redis from '@/lib/redis';
 import createRecommendation from '@/lib/server/firebase/movies/createRecommendation.js';
+import crypto from 'crypto';
 function buildSearchCriteriaPrompt({
 	cinemaType,
 	selectedCategories,
@@ -42,6 +43,38 @@ async function OpenAIAPI({ systemPrompt }: { systemPrompt: string }) {
 	});
 
 	return response;
+}
+// Generate a secure API key
+function generateApiKey() {
+	// Generate a random 32-byte buffer
+	const randomBytes = crypto.randomBytes(32);
+	// Convert the buffer to a hexadecimal string
+	const apiKey = randomBytes.toString('hex');
+	return `${apiKey}`;
+}
+async function createMediaAccessLimiterCookie(cookies) {
+	// Always generate a new API key
+	const apiKey = generateApiKey(); // Your function to generate an API key
+	try {
+		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
+	} catch (e) {
+		console.log(e);
+	}
+
+	// Define cookie options with a 60 seconds expiration
+	const options = {
+		maxAge: 60, // Expires in 60 seconds
+		secure: process.env.NODE_ENV === 'production', // Secure flag for HTTPS
+		httpOnly: true, // HttpOnly to prevent access from client-side scripts
+		sameSite: 'strict', // SameSite for CSRF protection
+		path: '/' // Accessible across the entire site
+	};
+
+	// Set the 'media_api_key' cookie with the new API key and options
+	cookies.set('media_api_key', apiKey, options);
+
+	// Return the new API key for potential immediate use
+	return apiKey;
 }
 
 function updateRequestCountCookie(cookies) {
@@ -149,6 +182,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			console.log(recommendations);
 		}
 	};
+
+	// Create an API Key that our getMediaDetails endpoint can use
+	await createMediaAccessLimiterCookie(cookies);
 	// Initiating the stream handling
 	const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });
 
