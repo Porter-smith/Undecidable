@@ -11,7 +11,7 @@ import redis from '../redis';
 import crypto from 'crypto';
 
 // Define types for the callbacks to handle function and tool calls.
-interface MovieRecommendation {
+export interface MovieRecommendation {
 	title: string;
 	year: string;
 }
@@ -43,7 +43,7 @@ export async function* handleOpenAIStream(
 	callbacks: OpenAIStreamCallbacks
 ): AsyncGenerator<string, void, unknown> {
 	// Generate and store an API key in Redis
-	const apiKey = await generateApiKey();
+	const apiKey = generateApiKey();
 	try {
 		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
 	} catch (e) {
@@ -73,7 +73,7 @@ export async function* handleOpenAIStream(
 					year: match[3]
 				};
 				recommendations.push(movieJson);
-				await delay(100); // Timing issue
+				await delay(200); // Timing issue
 				yield JSON.stringify(movieJson);
 				yield ' ';
 				// Remove the processed match from processableContent.

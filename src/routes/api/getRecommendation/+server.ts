@@ -8,6 +8,7 @@ import type { RequestHandler } from './$types';
 import getUserData from '@/lib/server/firebase/users/getUserData';
 import { FREE_REQUEST_COUNT, USER_REQUEST_COUNT } from '@/constants';
 import redis from '@/lib/redis';
+import createRecommendation from '@/lib/server/firebase/movies/createRecommendation.js';
 function buildSearchCriteriaPrompt({
 	cinemaType,
 	selectedCategories,
@@ -142,7 +143,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		specificDescriptors
 	});
 	const callbacks: OpenAIStreamCallbacks = {
-		onFinal: (accumulatedContent, recommendations) => {}
+		onFinal: async (accumulatedContent, recommendations) => {
+			const userUID = user?.uid || 'Anonomous User';
+			await createRecommendation(userUID, recommendations, criteriaPrompt);
+			console.log(recommendations);
+		}
 	};
 	// Initiating the stream handling
 	const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });

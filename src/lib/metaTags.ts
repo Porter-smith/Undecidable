@@ -6,6 +6,11 @@ export const meta = {
 		description:
 			'Discover your next favorite movie with our AI-driven recommendation platform. Explore personalized suggestions tailored to your taste.'
 	},
+	search: {
+		title: 'Search - Undecidable',
+		description:
+			'Discover your next favorite movie with our AI-driven recommendation platform. Explore personalized suggestions tailored to your taste.'
+	},
 	signUp: {
 		title: 'Sign Up - Undecidable',
 		description:

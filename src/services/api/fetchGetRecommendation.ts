@@ -20,7 +20,11 @@ async function fetchGetRecommendation({
 	});
 
 	if (!response.ok) {
-		throw new Error(`Failed to fetch LLM. Server responded with status: ${response.status}`);
+		const data = await response.json();
+		throw new Error(
+			data.error ||
+				`Failed to fetch recommendations. Server responded with status: ${response.status}`
+		);
 	}
 
 	return response.body; // Return the ReadableStream from the response

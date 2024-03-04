@@ -12,6 +12,10 @@
 	let searchResponse = '';
 	let error = '';
 	let recommendations = [];
+	import { meta } from '@/lib/metaTags';
+	export let data;
+	const title = meta.search.title;
+	const description = meta.search.description;
 
 	const genres = [
 		'Action',
@@ -44,7 +48,7 @@
 			const stream = await fetchGetRecommendation(criteria);
 			await handleStreamedResponse({ stream });
 		} catch (err) {
-			error = 'An error occurred while fetching recommendations.';
+			error = err;
 		}
 
 		loading = false;
@@ -98,6 +102,10 @@
 	//
 </script>
 
+<svelte:head>
+	<title>{title}</title>
+	<meta name="description" content={description} />
+</svelte:head>
 <div class="flex flex-wrap justify-center">
 	{#each cinemaTypes as type}
 		<label
