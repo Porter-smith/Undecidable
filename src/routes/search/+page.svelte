@@ -44,7 +44,7 @@
 			const stream = await fetchGetRecommendation(criteria);
 			await handleStreamedResponse({ stream });
 		} catch (err) {
-			error = 'An error occurred while fetching recommendations.';
+			error = err;
 		}
 
 		loading = false;

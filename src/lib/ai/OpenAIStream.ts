@@ -11,7 +11,7 @@ import redis from '../redis';
 import crypto from 'crypto';
 
 // Define types for the callbacks to handle function and tool calls.
-interface MovieRecommendation {
+export interface MovieRecommendation {
 	title: string;
 	year: string;
 }
@@ -83,6 +83,7 @@ export async function* handleOpenAIStream(
 	}
 
 	if (accumulatedContent && callbacks.onFinal) {
+		// Save it to firebase
 		callbacks.onFinal(accumulatedContent, recommendations);
 	}
 }
