@@ -1,9 +1,3 @@
-// TODO : Werid vercel bug I found where yielding json objects. It will chunk the json objects together in 1 chunk.
-// Like this 1 chunk {}{}
-// The frontend expects this to be a chunk {}
-// **** You just need to yield an empty string after it to fix it ???? I don't why lol (javascript moment?)
-
-// This is a custom version of OpenAIStream from the vercel ai package to handle the movies so we can just handle recommendation on the backend and don't need to handle getting movie information on frontend
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import type { ToolCall } from '@/types/message';
@@ -57,10 +51,12 @@ export function handleOpenAIStream(
 						recommendations.push(movieJson);
 
 						// Timing to ensure proper async handling, not truly needed unless specific logic requires it.
+						// TODO: Test if we need this but was having issues sometimes so gonna leave it for now
 						await delay(10);
 
 						controller.enqueue(JSON.stringify(movieJson));
-						// controller.enqueue(' ');
+						// TODO : Werid vercel bug I found where yielding json objects. It will chunk the json objects together in 1 chunk. If you yield a space after one it fixes it
+						controller.enqueue(' ');
 
 						// Remove the processed match from processableContent.
 						processableContent = processableContent.replace(match[0], '');
