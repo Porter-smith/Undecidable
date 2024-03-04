@@ -7,8 +7,8 @@ import type { CinemaSearchCriteria } from '@/types/recommendation';
 import type { RequestHandler } from './$types';
 import getUserData from '@/lib/server/firebase/users/getUserData';
 import { FREE_REQUEST_COUNT, USER_REQUEST_COUNT } from '@/constants';
-import { createMediaAccessLimiterCookie, updateRequestCountRedis } from '@/lib/redisUtils';
-import { updateRequestCountCookie } from '@/lib/cookieUtils';
+import { createMediaAccessLimiterCookie, updateRequestCountRedis } from '@/lib/server/redisUtils';
+import { updateRequestCountCookie } from '@/lib/server/cookieUtils';
 import type { User } from '@/types/user';
 import type { Cookies } from '@sveltejs/kit';
 async function rateLimiter({ user, cookies }: { user: User | null; cookies: Cookies }) {
