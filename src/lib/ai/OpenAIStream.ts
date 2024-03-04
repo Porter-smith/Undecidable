@@ -7,6 +7,9 @@
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import type { ToolCall } from '@/types/message';
+import redis from '../redis';
+import crypto from 'crypto';
+
 // Define types for the callbacks to handle function and tool calls.
 interface MovieRecommendation {
 	title: string;
@@ -21,12 +24,17 @@ export interface OpenAIStreamCallbacks {
 	onToolCall?: (toolCall: ToolCall) => Promise<any>;
 	onFinal?: (accumulatedContent: string, recommendations: MovieRecommendation[]) => void;
 }
-
-async function getMovieData({ title, year }: MovieRecommendation): Promise<Movie> {
-	return { title, year, description: 'test' };
-}
 async function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Generate a secure API key
+function generateApiKey() {
+	// Generate a random 32-byte buffer
+	const randomBytes = crypto.randomBytes(32);
+	// Convert the buffer to a hexadecimal string
+	const apiKey = randomBytes.toString('hex');
+	return `${apiKey}`;
 }
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
@@ -34,27 +42,19 @@ export async function* handleOpenAIStream(
 	stream: Stream<ChatCompletionChunk>,
 	callbacks: OpenAIStreamCallbacks
 ): AsyncGenerator<string, void, unknown> {
+	// Generate and store an API key in Redis
+	const apiKey = await generateApiKey();
+	try {
+		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
+	} catch (e) {
+		console.log(e);
+	}
+	// Yield the API key to the client.
+	yield JSON.stringify({ apiKey: apiKey });
+	yield ' ';
 	let accumulatedContent = '';
 	let processableContent = '';
 	let recommendations = [];
-	let fetchPromises = [];
-	let availableResults = [];
-	async function fetchMovieData(movieRecommendation) {
-		try {
-			// Generate a random delay between 1 and 5 seconds.
-			let delay = Math.random() * 4000 + 1000;
-			console.log(delay);
-
-			await new Promise((resolve) => setTimeout(resolve, delay));
-
-			const movieData = await getMovieData(movieRecommendation);
-			const result = JSON.stringify(movieData);
-			return result;
-		} catch (error) {
-			// Handle errors as needed.
-			console.error('Error fetching movie data:', error);
-		}
-	}
 
 	for await (const chunk of stream) {
 		const delta = chunk.choices[0].delta;
@@ -73,58 +73,13 @@ export async function* handleOpenAIStream(
 					year: match[3]
 				};
 				recommendations.push(movieJson);
+				await delay(100); // Timing issue
 				yield JSON.stringify(movieJson);
 				yield ' ';
-
-				// Initiate data fetch without waiting for it to complete.
-				let fetchPromise = fetchMovieData(movieJson)
-					.then((result) => {
-						// Instead of yielding here, store the result for later.
-						availableResults.push(result);
-						// Find the index of this promise in the fetchPromises array.
-						let index = fetchPromises.indexOf(fetchPromise);
-						if (index > -1) {
-							// Remove the promise from the array.
-							fetchPromises.splice(index, 1);
-						}
-					})
-					.catch((error) => {
-						// Handle or log error
-						console.error('Error fetching movie data:', error);
-					});
-
-				// Store the promise so we can ensure all are completed later.
-				fetchPromises.push(fetchPromise);
-
 				// Remove the processed match from processableContent.
 				processableContent = processableContent.replace(match[0], '');
 			}
-
-			// Check for any available results and yield them.
-			while (availableResults.length > 0) {
-				let result = availableResults.shift(); // Remove the result from the array.
-				console.log(result);
-				yield result; // Yield the available result.
-				yield ' ';
-			}
 		}
-	}
-	// TODO: Add a thing where after lets say if a promise takes like 10s we can just say it failed
-	while (fetchPromises.length > 0) {
-		while (availableResults.length > 0) {
-			let result = availableResults.shift(); // Remove the result from the array.
-			console.log(result);
-			yield result; // Yield the available result.
-			await delay(100); // Wait for a second after yielding each result.
-		}
-		await delay(100); // Wait for a second before checking again if there are no immediate results.
-	}
-
-	while (availableResults.length > 0) {
-		let result = availableResults.shift(); // Remove the result from the array.
-		console.log(result);
-		yield result; // Yield the available result.
-		yield ' ';
 	}
 
 	if (accumulatedContent && callbacks.onFinal) {

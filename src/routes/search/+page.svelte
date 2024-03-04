@@ -29,7 +29,7 @@
 		{ value: 'movie', title: 'Movie' },
 		{ value: 'tv show or movie', title: 'No Preference' }
 	];
-
+	let searchApiKey = '';
 	async function getRecommendations() {
 		loading = true;
 		searchResponse = '';
@@ -50,19 +50,27 @@
 		loading = false;
 	}
 
-	function updateMovieData(data) {
-		const index = recommendations.findIndex(
-			(movie) => movie.title === data.title && movie.year === data.year
-		);
-
-		if (index >= 0) {
-			recommendations = [
-				...recommendations.slice(0, index),
-				{ ...recommendations[index], ...data },
-				...recommendations.slice(index + 1)
-			];
+	function updateMovieData(chunk) {
+		// Check if the chunk is an API key
+		if (chunk.apiKey) {
+			searchApiKey = chunk.apiKey;
 		} else {
-			recommendations = [...recommendations, data];
+			// Assume the chunk is movie data
+			const index = recommendations.findIndex(
+				(movie) => movie.title === chunk.title && movie.year === chunk.year
+			);
+
+			if (index >= 0) {
+				// Update existing movie data
+				recommendations = [
+					...recommendations.slice(0, index),
+					{ ...recommendations[index], ...chunk },
+					...recommendations.slice(index + 1)
+				];
+			} else {
+				// Add new movie data
+				recommendations = [...recommendations, chunk];
+			}
 		}
 	}
 	async function handleStreamedResponse({ stream }: { stream: ReadableStream<Uint8Array> }) {
@@ -142,7 +150,7 @@
 			{#if recommendation !== ''}
 				<div class="mb-8">
 					{#if typeof recommendation !== 'string' && recommendation.title}
-						<RecommendationCard {recommendation} />
+						<RecommendationCard {searchApiKey} {recommendation} />
 					{:else}
 						<div in:fade>
 							<LoadingCard incomingStream={recommendation} />
