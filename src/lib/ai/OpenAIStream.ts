@@ -1,23 +1,16 @@
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
-import type { ToolCall } from '@/types/message';
-import redis from '../redis';
 
 // Define types for the callbacks to handle function and tool calls.
 export interface ShowRecommendation {
 	title: string;
 	year: string;
 }
-interface Movie {
-	title: string;
-	year: string;
-	description: string;
-}
+
 export interface OpenAIStreamCallbacks {
-	onToolCall?: (toolCall: ToolCall) => Promise<any>;
 	onFinal?: (accumulatedContent: string, recommendations: ShowRecommendation[]) => void;
 }
-async function delay(ms) {
+async function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -31,7 +24,7 @@ export function handleOpenAIStream(
 		async start(controller) {
 			let accumulatedContent = '';
 			let processableContent = '';
-			let recommendations = [];
+			const recommendations: ShowRecommendation[] = [];
 
 			for await (const chunk of stream) {
 				const delta = chunk.choices[0].delta;
