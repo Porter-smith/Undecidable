@@ -1,7 +1,4 @@
-import { Redis } from '@upstash/redis';
-import { UPSTASH_REDIS_URL, UPSTASH_REDIS_TOKEN } from '$env/static/private';
-// Initialize your Upstash Redis connection
-export const redis = new Redis({
-	url: UPSTASH_REDIS_URL,
-	token: UPSTASH_REDIS_TOKEN
-});
+import Redis from 'ioredis';
+import { REDIS_CONNECTION } from '$env/static/private';
+
+export default REDIS_CONNECTION ? new Redis(REDIS_CONNECTION) : new Redis();

@@ -1,25 +1,35 @@
-import { Redis } from '@upstash/redis';
 import { json } from '@sveltejs/kit';
-import { UPSTASH_REDIS_URL, UPSTASH_REDIS_TOKEN, OMDB_API_KEY } from '$env/static/private';
+import { OMDB_API_KEY } from '$env/static/private';
+import redis from '@/lib/redis.js';
 
-// Initialize your Upstash Redis connection
-const redis = new Redis({
-	url: UPSTASH_REDIS_URL,
-	token: UPSTASH_REDIS_TOKEN
-});
+// Function to check if the API key exists and decrement its usage counter
+async function RedisApiCheck(apiKey) {
+	try {
+		// Check if the API key exists
+		const keyCount = await redis.get(apiKey);
+		if (keyCount && keyCount > 0) {
+			// Decrement the API key usage counter
+			await redis.decr(apiKey);
+			console.log('Checked');
+			return true;
+		} else {
+			return false;
+		}
+	} catch (error) {
+		// Handle any exceptions (e.g., Redis connection error)
+		console.error(`Error checking API key: ${error}`);
+		return false;
+	}
+}
 
 export async function POST({ request }) {
 	// Extract API key from the request, assuming it's provided in a header
 	const apiKey = request.headers.get('x-api-key');
 
-	// Check if the API key exists
-	const keyCount = await redis.get(apiKey);
-	if (!keyCount || keyCount <= 0) {
+	// Validate the API key
+	if (!(await RedisApiCheck(apiKey))) {
 		return json({ error: 'Invalid or exhausted API key' }, { status: 401 });
 	}
-
-	// Decrement the API key usage counter
-	await redis.decr(apiKey);
 
 	// Extract the movie title from the request body
 	const { title } = await request.json();

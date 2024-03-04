@@ -4,6 +4,8 @@ import { StreamingTextResponse } from 'ai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import OpenAI from 'openai';
 import type { CinemaSearchCriteria } from '../../../types/recommendation';
+import type { RequestHandler } from './$types';
+import getUserData from '../../../lib/server/firebase/users/getUserData';
 function buildSearchCriteriaPrompt({
 	cinemaType,
 	selectedCategories,
@@ -39,7 +41,19 @@ async function OpenAIAPI({ systemPrompt }: { systemPrompt: string }) {
 	return response;
 }
 
-export async function POST({ request }: { request: any }) {
+export const POST: RequestHandler = async ({ request, cookies }) => {
+	const sessionCookie = cookies.get('__session') ?? null;
+	// Get user data based on the session cookie.
+	const user = await getUserData(sessionCookie);
+	if (!user) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 401,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	// User is authenticated, proceed with updating user data...
+	// Extract the data you want to update from the request body.
 	const { cinemaType, selectedCategories, specificDescriptors } = await request.json();
 	const criteriaPrompt = buildSearchCriteriaPrompt({
 		cinemaType,
@@ -54,4 +68,4 @@ export async function POST({ request }: { request: any }) {
 
 	const stream = handleOpenAIStream(response, callbacks);
 	return new StreamingTextResponse(stream);
-}
+};

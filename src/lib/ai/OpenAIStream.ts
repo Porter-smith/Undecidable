@@ -7,7 +7,9 @@
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import type { ToolCall } from '@/types/message';
-import { redis } from '../redis';
+import redis from '../redis';
+import crypto from 'crypto';
+
 // Define types for the callbacks to handle function and tool calls.
 interface MovieRecommendation {
 	title: string;
@@ -25,9 +27,14 @@ export interface OpenAIStreamCallbacks {
 async function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-async function generateApiKey() {
-	// This should generate a unique and secure API key
-	return 'unique_api_key_' + Date.now(); // Simplified example, consider a more robust key generation
+
+// Generate a secure API key
+function generateApiKey() {
+	// Generate a random 32-byte buffer
+	const randomBytes = crypto.randomBytes(32);
+	// Convert the buffer to a hexadecimal string
+	const apiKey = randomBytes.toString('hex');
+	return `${apiKey}`;
 }
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
@@ -37,12 +44,11 @@ export async function* handleOpenAIStream(
 ): AsyncGenerator<string, void, unknown> {
 	// Generate and store an API key in Redis
 	const apiKey = await generateApiKey();
-	await redis.set(apiKey, '5'); // Initialize the usage counter to 5.
-	// Calculate the expiration timestamp (current time + 60 seconds).
-	const expiryTimestamp = Math.floor(Date.now() / 1000) + 60; // Get the current Unix time in seconds and add 60 seconds.
-
-	// Set the expiration time for the API key using EXPIREAT.
-	await redis.expireat(apiKey, expiryTimestamp);
+	try {
+		await redis.set(apiKey, '5', 'EX', 60); // Initialize the usage counter to 5.
+	} catch (e) {
+		console.log(e);
+	}
 	// Yield the API key to the client.
 	yield JSON.stringify({ apiKey: apiKey });
 	yield ' ';
