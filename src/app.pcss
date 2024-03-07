@@ -2,7 +2,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--background: #131313;
+	--primary: #ffffff;
+	--accent: #a0a0a0;
+}
+
 body {
 	font-family: 'Inter';
-	background-color: #fafbff;
+	background-color: var(--background);
+	color: var(--primary);
+}
+
+input {
+	font-family: Inter, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
 }

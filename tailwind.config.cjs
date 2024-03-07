@@ -4,6 +4,10 @@ export default {
 	darkMode: ["class"],
 	theme: {
 	  extend: {
+		colors: {
+			"background": 'var(--background)',
+			"primary": 'var(--primary)',
+		  },
 		fontFamily: {
 				  inter: ['Inter', 'sans-serif'],
 				  },
