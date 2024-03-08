@@ -6,7 +6,6 @@
 // This is a custom version of OpenAIStream from the vercel ai package to handle the movies so we can just handle recommendation on the backend and don't need to handle getting movie information on frontend
 import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
-import type { ToolCall } from '@/types/message';
 
 // Define types for the callbacks to handle function and tool calls.
 export interface ShowRecommendation {
@@ -14,10 +13,9 @@ export interface ShowRecommendation {
 	year: string;
 }
 export interface OpenAIStreamCallbacks {
-	onToolCall?: (toolCall: ToolCall) => Promise<any>;
 	onFinal?: (accumulatedContent: string, recommendations: ShowRecommendation[]) => void;
 }
-async function delay(ms) {
+async function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
