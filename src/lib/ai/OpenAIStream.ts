@@ -49,7 +49,7 @@ export function handleOpenAIStream(
 
 						controller.enqueue(JSON.stringify(movieJson));
 						// TODO : Werid vercel bug I found where yielding json objects. It will chunk the json objects together in 1 chunk. If you yield a space after one it fixes it
-						controller.enqueue(' ');
+						// controller.enqueue(' ');
 
 						// Remove the processed match from processableContent.
 						processableContent = processableContent.replace(match[0], '');

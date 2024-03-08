@@ -59,6 +59,7 @@
 		let readResult;
 		while (!(readResult = await reader.read()).done) {
 			const chunk = decoder.decode(readResult.value);
+			console.log(chunk)
 			await processChunk(chunk);
 		}
 	}
