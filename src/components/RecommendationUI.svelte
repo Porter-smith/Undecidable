@@ -97,7 +97,7 @@
 				{/if}
 			</Button>
 			{#if error}
-				<p class="mb-2 mt-2 text-sm text-red-500">{error}</p>
+				<p class="mnb-2 mt-2 text-sm text-red-500">{error}</p>
 			{/if}
 		</div>
 	</div>

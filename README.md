@@ -6,6 +6,10 @@
   This is the repository for the startup I am making in 30 days called Undecidable. I will be uploading videos on it so you can check out my <a href="https://www.youtube.com/channel/UCnCkvoaFWzZ8ASmdGlkZ33w">youtube channel here!</a>
 </p>
 
+## Important Note
+
+This code is not really meant to work out of the box because I am just using the repo for hosting the Undecidable website! I will make a guide to run this code locally probably after the challenge
+
 ## Youtube Videos
 
 I'll be posting a series of weekly videos for this challenge, and here's what you can look forward to:
