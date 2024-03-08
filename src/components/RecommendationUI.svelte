@@ -4,17 +4,18 @@
 	import RecommendationCard from '@/components/RecommendationCard.svelte';
 	import type { CinemaSearchCriteria } from '../types/recommendation';
 	import fetchGetRecommendation from '../services/api/fetchGetRecommendation';
-
+	import * as animateScroll from 'svelte-scrollto';
 	let specifications = '';
 	let error;
 	export let cinemaType = 'Movie';
-	let currentStep = 2;
+	let searchResponse = '';
 	let recommendations = [];
 	let loading = false;
 
 	async function search() {
 		loading = true;
 		recommendations = [];
+		searchResponse = '';
 		try {
 			const criteria: CinemaSearchCriteria = {
 				cinemaType: cinemaType,
@@ -30,47 +31,51 @@
 		loading = false;
 	}
 
-	onMount(() => {
-		console.log('Component mounted');
-	});
+	function updateRecommendationsFromResponse() {
+		const lines = searchResponse.split('\n');
 
-	function updateMovieData(chunk) {
-		// Assume the chunk is movie data
-		const index = recommendations.findIndex(
-			(movie) => movie.title === chunk.title && movie.year === chunk.year
-		);
+		const newRecommendations = lines
+			.map((line) => {
+				if (line) {
+					// Regex for various title formats
+					const match = line.match(/^(?:\d+\.\s\*\*|\s+)?(.*?)\s*\((\d{4})\):/);
+					if (match) {
+						// Remove any trailing ** before trimming
+						let title = match[1].replace(/\*\*$/, '');
+						return { title: title.trim(), year: match[2] };
+					}
+				}
+				return null;
+			})
+			.filter(Boolean);
 
-		if (index >= 0) {
-			// Update existing movie data
-			recommendations = [
-				...recommendations.slice(0, index),
-				{ ...recommendations[index], ...chunk },
-				...recommendations.slice(index + 1)
-			];
-		} else {
-			// Add new movie data
-			recommendations = [...recommendations, chunk];
+		if (newRecommendations.length > recommendations.length) {
+			recommendations = newRecommendations;
+			animateScroll.scrollToBottom({ duration: 1500 });
 		}
 	}
-	async function handleStreamedResponse({ stream }: { stream: ReadableStream<Uint8Array> }) {
+	async function handleStreamedResponse({ stream }) {
 		const reader = stream.getReader();
-		const decoder = new TextDecoder('utf-8');
+		const decoder = new TextDecoder();
 
-		let readResult;
-		while (!(readResult = await reader.read()).done) {
-			const chunk = decoder.decode(readResult.value);
-			console.log(chunk)
-			await processChunk(chunk);
+		try {
+			while (true) {
+				const { value, done } = await reader.read();
+				if (done) {
+					// endStream = true;
+					break;
+				}
+				console.log(searchResponse);
+				searchResponse += decoder.decode(value);
+			}
+		} catch (err) {
+			error = 'An error occurred while streaming the response.';
 		}
 	}
 
-	async function processChunk(chunk: string) {
-		console.log('chunk', chunk);
-		try {
-			const data = JSON.parse(chunk);
-			updateMovieData(data);
-		} catch (error) {
-			console.log('not a json', chunk);
+	$: {
+		if (searchResponse) {
+			updateRecommendationsFromResponse();
 		}
 	}
 </script>
