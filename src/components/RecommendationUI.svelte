@@ -15,6 +15,7 @@
 	async function search() {
 		loading = true;
 		recommendations = [];
+		searchResponse = '';
 		try {
 			const criteria: CinemaSearchCriteria = {
 				cinemaType: cinemaType,
@@ -29,10 +30,6 @@
 
 		loading = false;
 	}
-
-	onMount(() => {
-		console.log('Component mounted');
-	});
 
 	function updateRecommendationsFromResponse() {
 		const lines = searchResponse.split('\n');
