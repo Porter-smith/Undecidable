@@ -1,38 +1,41 @@
+<!-- Meets Guidelines of a dialog modal from w3  -->
+<!-- https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ -->
+
+<!-- 
+  * Tab:
+  Moves focus to the next tabbable element inside the popover.
+  If focus is on the last tabbable element inside the popover, moves focus to the first tabbable element inside the popover.
+  * Shift + Tab:
+  Moves focus to the previous tabbable element inside the popover.
+  If focus is on the first tabbable element inside the popover, moves focus to the last tabbable element inside the popover.
+  * Escape: 
+  Closes the Popover. 
+-->
 <script lang="ts">
-	import { focusTrap } from '@/lib/actions/FocusTrap/focusTrap.js';
-	import { clickOutside } from '@/lib/actions/HandleClickOutside/clickOutside.js';
-	import { keyDown } from '@/lib/actions/HandleKeyPress/keyDown.js';
+	import { focusTrap } from '../../../lib/actions/FocusTrap/focusTrap';
+	import { clickOutside } from '../../../lib/actions/HandleClickOutside/clickOutside';
+	import { keyDown } from '../../../lib/actions/HandleKeyPress/keyDown';
 
 	let open = false;
-	let isAnimatingClose = false;
 	let popoverTrigger: HTMLElement;
-
-	function closePopover() {
-		isAnimatingClose = true;
-		setTimeout(() => {
+	async function closePopover() {
+		if (open) {
 			open = false;
-			isAnimatingClose = false;
-			if (popoverTrigger) {
-				popoverTrigger.setAttribute('aria-expanded', 'false');
-			}
-		}, 100); // Adjust the duration to match your close animation duration
-	}
-
-	function togglePopover() {
-		if (open && !isAnimatingClose) {
-			closePopover();
-		} else {
-			open = !open;
 		}
-		updateAria();
 	}
-
+	// This function updates the aria-expanded attribute
 	function updateAria() {
 		if (popoverTrigger) {
+			// Check if the popoverTrigger is bound
 			popoverTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
 		}
 	}
+	function togglePopover() {
+		open = !open;
+		updateAria();
+	}
 
+	// Function to be called by the popover trigger
 	export function bindTrigger(node: HTMLElement) {
 		popoverTrigger = node;
 		node.addEventListener('click', togglePopover);
@@ -42,29 +45,25 @@
 			}
 		};
 	}
-
-	$: dataState = !isAnimatingClose && open ? 'open' : 'closed';
 </script>
 
 <div class="relative">
-	<!-- Slot for the trigger -->
-	<slot name="trigger" {bindTrigger} {open} />
+	<!-- Slot for the trigger.  -->
+	<slot name="trigger" {bindTrigger} />
 
-	{#if open || isAnimatingClose}
+	{#if open}
 		<div
 			use:focusTrap
 			use:clickOutside={[closePopover, popoverTrigger]}
 			use:keyDown={[open, closePopover, ['Escape']]}
 			tabindex="-1"
+			class="animate-slide-up-fade absolute right-0 z-50 mt-2 w-56 rounded-md border border-gray-700 bg-background p-2 shadow-lg will-change-transform"
 			role="dialog"
 			aria-labelledby="popoverTitle"
 			aria-modal="true"
-			data-state={dataState}
-			class="absolute z-50 mt-2 min-w-[16rem] rounded-xl border border-gray-200 shadow-lg p-2 bg-white dark:bg-black dark:border-stone-700 will-change-transform
-		data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 		>
-			<!-- Slot for the Popover Content -->
-			<slot name="content" {closePopover} />
+			<!-- Slot for the Popover Content.  -->
+			<slot name="content" />
 		</div>
 	{/if}
 </div>

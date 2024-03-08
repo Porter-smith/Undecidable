@@ -4,12 +4,13 @@
 	import { Input } from '@/components/base/input';
 	import getFriendlyErrorMessage from '@/firebase/utils/auth/getFriendlyErrorMessage';
 	import { app } from '@/firebase/client';
+	import UndecidableLogo from '@/lib/assets/logo.png';
 
-	export let oobCode; // This will hold the oobCode from the URL.
+	export let oobCode;
 	let newPassword = '';
 	let confirmPassword = '';
-	let errorMessage;
-	let successMessage;
+	let errorMessage = '';
+	let successMessage = '';
 	const auth = getAuth(app);
 
 	async function handlePasswordChange() {
@@ -28,50 +29,39 @@
 	}
 </script>
 
-<div class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-	<div class="w-full max-w-md space-y-8 rounded-xl bg-white p-6 shadow-lg">
-		<div>
-			<h1 class="mt-6 text-center text-3xl font-extrabold text-black">Reset Your Password</h1>
-			<p class="mt-2 text-center text-sm text-black/80">
-				Enter and confirm your new password below.
-			</p>
-		</div>
-		{#if errorMessage}
-			<div class="mb-3 mt-4 text-center">
-				<p class="text-sm text-red-500">{errorMessage}</p>
-			</div>
-		{/if}
-		{#if successMessage}
-			<div class="mb-3 mt-4 text-center">
-				<p class="text-sm text-green-500">{successMessage}</p>
-			</div>
-		{/if}
-		<form class="mt-8 space-y-6" on:submit|preventDefault={handlePasswordChange}>
-			<div class="space-y-4 rounded-md">
-				<div>
-					<label for="new-password" class="sr-only">New Password</label>
-					<Input
-						bind:value={newPassword}
-						type="password"
-						id="new-password"
-						placeholder="New Password"
-						autocomplete="new-password"
-					/>
-				</div>
-				<div>
-					<label for="confirm-password" class="sr-only">Confirm Password</label>
-					<Input
-						bind:value={confirmPassword}
-						type="password"
-						id="confirm-password"
-						placeholder="Confirm Password"
-						autocomplete="new-password"
-					/>
-				</div>
-			</div>
-			<div>
-				<Button class="w-full" type="submit">Change Password</Button>
-			</div>
+<div
+	class="text-text-color flex h-screen w-full items-center justify-center bg-background text-center text-base"
+>
+	<div class="flex w-[337px] max-w-full flex-col items-center">
+		<img src={UndecidableLogo} alt="Logo" class="aspect-square w-[135px] max-w-full" />
+		<h1 class="text-2xl font-semibold">Reset Your Password</h1>
+		<form
+			class="mt-4 flex flex-col items-center self-stretch"
+			on:submit|preventDefault={handlePasswordChange}
+		>
+			<Input
+				bind:value={newPassword}
+				class="input-style"
+				type="password"
+				placeholder="New Password"
+				required
+			/>
+			<Input
+				bind:value={confirmPassword}
+				class="input-style"
+				type="password"
+				placeholder="Confirm Password"
+				required
+			/>
+
+			{#if successMessage}
+				<div class="text-sm text-green-500">{successMessage}</div>
+			{/if}
+			{#if errorMessage}
+				<div class="text-sm text-red-500">{errorMessage}</div>
+			{/if}
+
+			<Button type="submit" class="w-full" variant="grey">Change Password</Button>
 		</form>
 	</div>
 </div>

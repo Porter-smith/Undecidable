@@ -18,7 +18,3 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
-
-<h1>Welcome to SvelteKit test</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-<Button on:click={handleSignOut}>sign out</Button>

@@ -18,17 +18,22 @@ export const handle = (async ({ event, resolve }) => {
 	if (!isAdmin && event.url.pathname === '/admin') {
 		throw redirect(302, '/'); // Redirect to home or a custom access denied page
 	}
-	// *** User Sign in Already ***
-	// Redirect logic for signed-in users trying to access the /signin page
+
+	// If user goes to sign in page redirect them to login
 	if (userID && event.url.pathname.startsWith('/signin')) {
+		throw redirect(302, '/login');
+	}
+	// *** User Sign in Already ***
+	// Redirect logic for signed-in users trying to access the /login page
+	if (userID && event.url.pathname.startsWith('/login')) {
 		throw redirect(302, '/');
 	}
 	// ** Pages the user needs to be signed in to access **
 	if (!userID && event.url.pathname === '/dashboard') {
-		throw redirect(302, '/signin');
+		throw redirect(302, '/login');
 	}
 	if (!userID && event.url.pathname === '/account') {
-		throw redirect(302, '/signin');
+		throw redirect(302, '/login');
 	}
 
 	return resolve(event);

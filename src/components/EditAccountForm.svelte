@@ -5,6 +5,7 @@
 	import fetchUpdateUser from '@/services/api/auth/fetchUpdateUser';
 	import LoadingButton from '@/components/LoadingButton.svelte';
 	import type { User } from '@/types/user';
+	import UndecidableLogo from '@/lib/assets/logo.png';
 
 	export let user: User;
 	let loading = false;
@@ -14,24 +15,12 @@
 	let successMessage = '';
 	$: hasChanged = name !== user?.displayName || email !== user?.email;
 
-	// Function to construct an object with the new account details
-	function getAccountUpdates() {
-		let updates = {};
-		if (name !== user?.displayName) {
-			updates.displayName = name;
-		}
-		if (email !== user?.email) {
-			updates.email = email;
-		}
-		return updates;
-	}
-
 	async function updateAccountDetails(event) {
 		event.preventDefault();
 		loading = true;
 		successMessage = '';
 		errorMessage = '';
-		const updates = getAccountUpdates();
+		const updates = { displayName: name, email: email };
 
 		try {
 			const updatedUser = await fetchUpdateUser(updates);
@@ -45,39 +34,37 @@
 	}
 </script>
 
-<div class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-	<div class="w-full max-w-md space-y-8 rounded-xl bg-white p-6 shadow-lg">
-		<div>
-			<h1 class="mt-6 text-center text-3xl font-extrabold text-black">Edit Account</h1>
-		</div>
-		<form class="mt-8 space-y-6" on:submit|preventDefault={updateAccountDetails}>
-			<div class="space-y-4 rounded-md shadow-sm">
-				<div>
-					<label for="name" class="sr-only">Name</label>
-					<Input bind:value={name} type="text" id="name" placeholder="Name" required />
-				</div>
-				<div>
-					<label for="email" class="sr-only">Email</label>
-					<Input bind:value={email} type="email" id="email" placeholder="Email Address" required />
-				</div>
-			</div>
+<div
+	class="text-text-color flex h-screen w-full items-center justify-center bg-background text-center text-base"
+>
+	<div class="flex w-[337px] max-w-full flex-col items-center">
+		<img src={UndecidableLogo} alt="Logo" class="aspect-square w-[135px] max-w-full" />
+		<h1 class="text-2xl font-semibold">Edit Account</h1>
+		<form
+			class="mt-4 flex flex-col items-center self-stretch"
+			on:submit|preventDefault={updateAccountDetails}
+		>
+			<Input bind:value={name} class="input-style" placeholder="Name" required />
+			<Input
+				bind:value={email}
+				class="input-style"
+				type="email"
+				placeholder="Email Address"
+				required
+			/>
+
 			{#if successMessage}
-				<div class="mb-3 mt-4 text-center">
-					<p class="text-sm text-green-500">{successMessage}</p>
-				</div>
+				<div class="text-sm text-green-500">{successMessage}</div>
 			{/if}
 			{#if errorMessage}
-				<div class="mb-3 mt-4 text-center">
-					<p class="text-sm text-red-500">{errorMessage}</p>
-				</div>
+				<div class="text-sm text-red-500">{errorMessage}</div>
 			{/if}
-			<div>
-				{#if loading}
-					<LoadingButton class="w-full" type="submit" />
-				{:else}
-					<Button disabled={!hasChanged} class="w-full" type="submit">Save Changes</Button>
-				{/if}
-			</div>
+
+			{#if loading}
+				<LoadingButton type="submit" variant="grey" disabled={!hasChanged} />
+			{:else}
+				<Button type="submit" variant="grey" disabled={!hasChanged}>Save Changes</Button>
+			{/if}
 		</form>
 	</div>
 </div>

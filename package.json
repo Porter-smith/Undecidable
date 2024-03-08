@@ -38,6 +38,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-vercel": "^5.1.0",
+		"@tailwindcss/typography": "^0.5.10",
 		"@upstash/redis": "^1.28.4",
 		"ai": "^3.0.2",
 		"firebase": "^10.8.1",

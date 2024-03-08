@@ -12,13 +12,17 @@
 	export let variant: ButtonVariant = 'default';
 
 	const buttonVariants = {
+		grey: 'mt-4 w-full flex max-w-full items-center justify-center self-stretch whitespace-nowrap rounded-lg px-16 py-4 font-bold text-neutral-900 max-md:px-5 disabled:bg-neutral-400 bg-primary transition-colors duration-300',
+		google2:
+			'mt-[12px] flex w-full items-center justify-center rounded-lg border border-solid border-neutral-600 bg-neutral-900 bg-opacity-0 py-3.5 text-center text-base font-bold tracking-tight text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-900',
 		google:
 			'disabled:opacity-50 disabled:pointer-events-none group relative w-full flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-transparent text-sm font-medium rounded-md bg-white dark:bg-[#131314] dark:text-[#e3e3e3] hover:bg-gray-50 dark:hover:bg-white/8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
 		outlined:
 			'py-2 px-4 rounded-md border border-gray-300 text-black bg-white hover:bg-gray-50 transition duration-200 ease-in-out',
 		ghost:
-			'flex items-center space-x-3 rounded-lg  transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-accent dark:active:bg-accent/60',
-		rounded: 'px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors rounded-full',
+			'relative flex items-center justify-start space-x-2 rounded-md p-2 text-left text-sm transition-all duration-75 hover:bg-gray-600',
+		rounded:
+			'px-4 py-2 bg-primary hover:bg-primary/90 transition-colors rounded-full text-primary-foreground',
 		roundedOutlined:
 			'px-4 py-2 border border-black text-black hover:bg-gray-200 transition-colors rounded-full',
 		default:

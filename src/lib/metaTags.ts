@@ -11,6 +11,21 @@ export const meta = {
 		description:
 			'Discover your next favorite movie with our AI-driven recommendation platform. Explore personalized suggestions tailored to your taste.'
 	},
+	recommendations: {
+		title: 'Recommendations - Undecidable',
+		description:
+			'Explore your personalized movie recommendations. Discover films tailored to your tastes and preferences on our AI-driven platform.'
+	},
+	privacyPolicy: {
+		title: 'Privacy Policy - Undecidable',
+		description:
+			'Read our privacy policy to understand how we collect, use, and protect your data. Learn about your privacy rights and how we ensure your data is secure.'
+	},
+	termsOfService: {
+		title: 'Terms of Service - Undecidable',
+		description:
+			'Review the terms of service to understand the legal agreements that govern your use of our platform. Stay informed about your rights and obligations.'
+	},
 	signUp: {
 		title: 'Sign Up - Undecidable',
 		description:
