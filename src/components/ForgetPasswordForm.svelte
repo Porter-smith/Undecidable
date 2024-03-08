@@ -3,6 +3,7 @@
 	import { app } from '@/firebase/client';
 	import getFriendlyErrorMessage from '@/firebase/utils/auth/getFriendlyErrorMessage';
 	import Button from './base/button/Button.svelte';
+	import UndecidableLogo from '@/lib/assets/logo.png';
 	let email: string = '',
 		errorMessage,
 		loading,
@@ -25,9 +26,8 @@
 <div
 	class="text-text-color flex h-screen w-full items-center justify-center bg-neutral-900 text-center text-base max-md:px-5"
 >
-	<div
-		class="mt-24 flex w-[337px] max-w-full flex-col items-center space-y-8 rounded-xl p-6 max-md:mt-10"
-	>
+	<div class="flex w-[337px] max-w-full flex-col items-center space-y-4">
+		<img src={UndecidableLogo} alt="Logo" class="aspect-square w-[135px] max-w-full" />
 		<h1 class="text-2xl font-semibold leading-5 text-white">Reset Password</h1>
 		<p class="text-sm text-neutral-400">Enter the email associated with your account.</p>
 		<form class="w-full space-y-6" on:submit|preventDefault={handlePasswordReset}>
