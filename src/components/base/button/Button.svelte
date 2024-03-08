@@ -12,7 +12,7 @@
 	export let variant: ButtonVariant = 'default';
 
 	const buttonVariants = {
-		grey: 'mt-4 w-full flex max-w-full items-center justify-center self-stretch whitespace-nowrap rounded-lg px-16 py-4 font-bold text-neutral-900 max-md:px-5 disabled:bg-neutral-400 bg-primary transition-colors duration-300',
+		grey: 'mt-4 gap-4 w-full flex max-w-full items-center justify-center self-stretch whitespace-nowrap rounded-lg px-16 py-4 font-bold text-neutral-900 max-md:px-5 disabled:bg-neutral-400 bg-primary transition-colors duration-300',
 		google2:
 			'mt-[12px] flex w-full items-center justify-center rounded-lg border border-solid border-neutral-600 bg-neutral-900 bg-opacity-0 py-3.5 text-center text-base font-bold tracking-tight text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-900',
 		google:

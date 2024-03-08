@@ -6,7 +6,8 @@ import { type ShowRecommendation } from '@/lib/ai/OpenAIStream';
 async function createRecommendation(
 	userID: string,
 	shows: ShowRecommendation[],
-	searchQuery: string
+	searchQuery: string,
+	specificDescriptors: string
 ) {
 	try {
 		// Adding a new movie recommendation document to the 'movieRecommendations' collection
@@ -14,7 +15,8 @@ async function createRecommendation(
 			userID: userID, // Storing user ID associated with the recommendation
 			createdAt: new Date(), // Using the current date and time as the timestamp
 			shows: shows, // Storing the array of movie objects
-			searchQuery: searchQuery
+			searchQuery: searchQuery,
+			specificDescriptors: specificDescriptors
 			// You can add other relevant fields as necessary
 		});
 

@@ -65,9 +65,14 @@
 				</div>
 				<!-- Providers section -->
 				{#await promiseProviders}
-					<LoadingCard incomingStream={true} />
+					<div
+						class="background-animate h-6 w-40 rounded-full bg-gradient-to-r from-white/90 via-white/40 to-white/90"
+					/>
+					<div
+						class="background-animate ml-2 h-3 w-20 rounded-full bg-gradient-to-r from-white/50 via-white/20 to-white/50"
+					/>
 				{:then providersData}
-					{#if providersData.length > 0}
+					{#if providersData?.length > 0}
 						<div class="providers-container mt-4">
 							{#each providersData as provider}
 								<div class="provider mt-2">

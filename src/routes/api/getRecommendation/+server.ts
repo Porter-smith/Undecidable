@@ -11,6 +11,7 @@ import { createMediaAccessLimiterCookie, updateRequestCountRedis } from '@/lib/s
 import { updateRequestCountCookie } from '@/lib/server/cookieUtils';
 import type { User } from '@/types/user';
 import type { Cookies } from '@sveltejs/kit';
+import createRecommendation from '../../../lib/server/firebase/recommendations/createRecommendation';
 async function rateLimiter({ user, cookies }: { user: User | null; cookies: Cookies }) {
 	if (user) {
 		// For authenticated users, manage request counts using Redis
@@ -81,7 +82,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		await createMediaAccessLimiterCookie(cookies);
 		const response = await OpenAIAPI({ systemPrompt: criteriaPrompt });
 		const callbacks: OpenAIStreamCallbacks = {
-			/* Your callback implementations */
+			onFinal: async (accumulatedContent, recommendations) => {
+				const userUID = user?.uid || 'Anonomous User';
+				await createRecommendation(userUID, recommendations, criteriaPrompt, specificDescriptors);
+				console.log(recommendations);
+			}
 		};
 		const stream = handleOpenAIStream(response, callbacks);
 		return new StreamingTextResponse(stream);

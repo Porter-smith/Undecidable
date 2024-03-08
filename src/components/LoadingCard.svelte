@@ -5,9 +5,9 @@
 	export let incomingStream;
 </script>
 
-<div class="relative flex flex-col md:flex-row bg-neutral-800/70 shadow-md p-6">
+<div class="relative flex flex-col bg-neutral-800/70 p-6 shadow-md md:flex-row">
 	<div
-		class="bg-gradient-to-br from-neutral-900 via-neutral-700 to-neutral-900 background-animate text-white/50 flex items-center justify-center h-[250px] flex-none w-1/5 "
+		class="background-animate flex h-[250px] w-1/5 flex-none items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-700 to-neutral-900 text-white/50"
 	>
 		<svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
@@ -44,61 +44,37 @@
 			/>
 		</svg>
 	</div>
-	<div class="md:hidden z-10 absolute inset-0 bg-cover bg-center">
-		<div class="w-full h-full bg-black/80 bg-blur-sm" />
+	<div class="absolute inset-0 z-10 bg-cover bg-center md:hidden">
+		<div class="bg-blur-sm h-full w-full bg-black/80" />
 	</div>
 
-	<div class="z-40 flex flex-col justify-between md:ml-6 w-full">
+	<div class="z-40 flex w-full flex-col justify-between md:ml-6">
 		<div class="w-full">
-			<div class="flex items-end mb-4">
+			<div class="mb-4 flex items-end">
 				<div class="flex items-end">
 					<div
-						class="bg-gradient-to-r from-white/90 via-white/40 to-white/90 background-animate h-6 w-40 rounded-full"
+						class="background-animate h-6 w-40 rounded-full bg-gradient-to-r from-white/90 via-white/40 to-white/90"
 					/>
 					<div
-						class="h-3 bg-gradient-to-r from-white/50 via-white/20 to-white/50 background-animate w-20 rounded-full ml-2"
+						class="background-animate ml-2 h-3 w-20 rounded-full bg-gradient-to-r from-white/50 via-white/20 to-white/50"
 					/>
 				</div>
 			</div>
-			<div class="text-slate-200/90 mb-4 w-full">
+			<div class="mb-4 w-full text-slate-200/90">
 				{#if incomingStream}
 					{incomingStream}
 				{:else}
 					<div
-						class="w-full h-2 rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20 background-animate mb-2"
+						class="background-animate mb-2 h-2 w-full rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20"
 					/>
 					<div
-						class="w-full h-2 rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20 background-animate mb-2"
+						class="background-animate mb-2 h-2 w-full rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20"
 					/>
 					<div
-						class="w-1/2 h-2 rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20 background-animate"
+						class="background-animate h-2 w-1/2 rounded-full bg-gradient-to-r from-white/20 via-white/10 to-white/20"
 					/>
 				{/if}
 			</div>
 		</div>
 	</div>
 </div>
-
-<style>
-	body {
-		font-family: 'Inter', sans-serif;
-	}
-
-	.background-animate {
-		background-size: 400%;
-
-		-webkit-animation: AnimationName 3s ease infinite;
-		-moz-animation: AnimationName 3s ease infinite;
-		animation: AnimationName 3s ease infinite;
-	}
-
-	@keyframes AnimationName {
-		0%,
-		100% {
-			background-position: 0% 50%;
-		}
-		50% {
-			background-position: 100% 50%;
-		}
-	}
-</style>

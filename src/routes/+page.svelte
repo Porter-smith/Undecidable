@@ -2,6 +2,7 @@
 	import Button from '../components/base/button/Button.svelte';
 	import { handleSignOut } from '../firebase/utils/auth/handleServerSignOut';
 	import { meta } from '@/lib/metaTags';
+	import SearchThings from '@/components/SelectMovieType.svelte';
 	const title = meta.home.title;
 	const description = meta.home.description;
 </script>
@@ -18,3 +19,5 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
+
+<SearchThings />
