@@ -10,6 +10,9 @@ export interface ShowRecommendation {
 export interface OpenAIStreamCallbacks {
 	onFinal?: (accumulatedContent: string, recommendations: ShowRecommendation[]) => void;
 }
+async function delay(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 // Transform the handleOpenAIStream function into an async generator
 // This function will now yield StreamChunk objects
@@ -33,7 +36,6 @@ export function handleOpenAIStream(
 					// Use a global regular expression to find all matches.
 					const regex = /(\d+)\.\s\*\*(.+)\*\*\s\((\d{4})\):/g;
 					let match;
-
 					controller.enqueue(delta.content);
 					while ((match = regex.exec(processableContent)) !== null) {
 						const movieJson = {
@@ -41,6 +43,8 @@ export function handleOpenAIStream(
 							year: match[3]
 						};
 						recommendations.push(movieJson);
+						// Remove the processed match from processableContent.
+						processableContent = processableContent.replace(match[0], '');
 					}
 				}
 			}

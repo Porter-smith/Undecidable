@@ -65,7 +65,6 @@
 					// endStream = true;
 					break;
 				}
-				console.log(searchResponse);
 				searchResponse += decoder.decode(value);
 			}
 		} catch (err) {
