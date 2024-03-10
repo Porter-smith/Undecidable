@@ -35,6 +35,9 @@ dependencies:
   openai:
     specifier: ^4.28.4
     version: 4.28.4
+  posthog-js:
+    specifier: ^1.112.0
+    version: 1.112.0
   redis:
     specifier: ^4.6.13
     version: 4.6.13
@@ -2675,6 +2678,10 @@ packages:
       websocket-driver: 0.7.4
     dev: false
 
+  /fflate@0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+    dev: false
+
   /file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -3874,6 +3881,17 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  /posthog-js@1.112.0:
+    resolution: {integrity: sha512-GQ97lTjlVSTRcXtc9exmNS6PCx3DSmSRMjv4iwCs8+4z6ENx0mJKfiw0VQVsuthNByYXq+nW0Fao36YPl/USRg==}
+    dependencies:
+      fflate: 0.4.8
+      preact: 10.19.6
+    dev: false
+
+  /preact@10.19.6:
+    resolution: {integrity: sha512-gympg+T2Z1fG1unB8NH29yHJwnEaCH37Z32diPDku316OTnRPeMbiRV9kTrfZpocXjdfnWuFUl/Mj4BHaf6gnw==}
+    dev: false
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
