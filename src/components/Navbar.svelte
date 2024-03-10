@@ -3,15 +3,12 @@
 	import UserDropdown from '@/components/UserDropdown.svelte';
 	import { Button } from '@/components/base/button';
 	// import ShoppingBasket from '@/icons/ShoppingBasket.svelte';
+	import { page } from '$app/stores';
 	import HamburgerIcon from '@/icons/hamburger-menu.svg?component'; // Make sure you have a HamburgerIcon component
-	import type { User } from 'firebase/auth';
 	// import FrogOrKnotText from '@/icons/FrogOrKnotText.svelte';
 	import MobileUserDropdown from '@/components/MobileUserDropdown.svelte';
 	import LoginIcon from '@/icons/login-icon.svg?component';
-	import UndecidableLogo from '@/lib/assets/logo.png';
-	import ContactIcon from '@/icons/contact.svg?component';
 	import HomeIcon from '@/icons/home.svg?component';
-	import AboutIcon from '@/icons/about.svg?component';
 	import type { UserRecord } from 'firebase-admin/auth';
 	export let user: UserRecord | null;
 
@@ -29,6 +26,13 @@
 
 	function toggleMenu() {
 		menuOpen = !menuOpen;
+	}
+	$: {
+		if ($page.url.pathname) {
+			// This checks if the pathname is updated.
+			console.log('change detected');
+			menuOpen = false;
+		}
 	}
 </script>
 
