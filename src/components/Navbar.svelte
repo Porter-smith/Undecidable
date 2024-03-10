@@ -39,7 +39,7 @@
 >
 	<div class="mx-auto flex h-full max-w-screen-xl items-center justify-between px-5">
 		<!-- Hamburger Icon -->
-		<button class="md:hidden" on:click={toggleMenu}>
+		<button class="m-1 p-2 md:hidden" on:click={toggleMenu}>
 			<HamburgerIcon />
 		</button>
 
@@ -117,14 +117,14 @@
 					<HomeIcon />
 					<p class="text-sm">Home</p>
 				</Button>
-				<Button href="/about" class="w-full" type="submit" variant="ghost">
+				<!-- <Button href="/about" class="w-full" type="submit" variant="ghost">
 					<AboutIcon />
 					<p class="text-sm">About</p>
 				</Button>
 				<Button href="/contact" class="w-full" type="submit" variant="ghost">
 					<ContactIcon />
 					<p class="text-sm">Contact</p>
-				</Button>
+				</Button> -->
 				{#if user}
 					<!-- User Profile and Sign Out options for mobile menu -->
 					<div class="w-full text-center">

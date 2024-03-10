@@ -11,7 +11,7 @@
 </script>
 
 {#if user?.email}
-	<Button href="/orders" variant="ghost">
+	<Button href="/recommendations" variant="ghost">
 		<!-- <OrdersIcon /> -->
 		<MoviesIcon class="h-4 w-4" />
 		<p class="text-sm">Recommendations</p>
