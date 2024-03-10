@@ -39,7 +39,7 @@
 >
 	<div class="mx-auto flex h-full max-w-screen-xl items-center justify-between px-5">
 		<!-- Hamburger Icon -->
-		<button class="m-1 mt-[50px] p-2 md:hidden" on:click={toggleMenu}>
+		<button class="m-1 mt-[90px] p-2 md:hidden" on:click={toggleMenu}>
 			<HamburgerIcon />
 		</button>
 
