@@ -3,19 +3,19 @@ import { auth } from '@/firebase/client';
 import fetchCreateUser from '@/services/api/auth/fetchCreateUser';
 import handleSignin from './handleServerSignin';
 
-function shouldPromptForExternalBrowser() {
-  // Extend this function to detect other problematic user agents as needed.
-  return window.navigator.userAgent.includes('Messenger');
+function isRunningInFlutterWebView() {
+  return window.isFlutterInAppWebView === true;
 }
 
 async function handleGoogleSignIn() {
   try {
-    if (shouldPromptForExternalBrowser()) {
-      // Modify this to display a user-friendly message or UI element prompting to open in an external browser.
-      alert('Please open this link in your browser to continue with sign-in.');
-      return;
+    if (isRunningInFlutterWebView()) {
+      // If the code is running in Flutter WebView, send a message to Flutter to handle.
+      window.Flutter.postMessage('openExternalBrowser');
+      return; // Stop execution in the WebView after sending the message
     }
 
+    // Proceed with the normal sign-in process if not in a Flutter WebView
     const provider = new GoogleAuthProvider();
     const { user } = await signInWithPopup(auth, provider);
     const idToken = await user.getIdToken();

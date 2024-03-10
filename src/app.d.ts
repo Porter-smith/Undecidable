@@ -3,6 +3,14 @@
 import '@poppanator/sveltekit-svg/dist/svg';
 import type { DecodedIdToken } from 'firebase-admin/auth';
 declare global {
+	declare global {
+		interface Window {
+		  Flutter?: {
+			postMessage(message: string): void;
+		  };
+		  isFlutterInAppWebView?: boolean;
+		}
+	  }
 	namespace App {
 		// interface Error {}
 		interface Locals {
