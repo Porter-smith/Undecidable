@@ -6,18 +6,9 @@
 	let loading = false;
 
 	async function signIn() {
-		if (window.navigator.userAgent.includes('Messenger')) {
-			alert('Please open this link in your browser to sign in.');
-			loading = false;
-		} else {
-			loading = true;
-			await handleGoogleSignIn().catch((error) => {
-				// Handle or log the error
-				console.error('Error during Google sign-in:', error);
-				loading = false;
-			});
-			loading = false;
-		}
+		loading = true;
+		await handleGoogleSignIn();
+		loading = false;
 	}
 </script>
 
